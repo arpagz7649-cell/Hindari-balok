@@ -1,21 +1,50 @@
-// --- Ini adalah kode C# ---
 using System;
 
-public class KarakterGame {
-    // 1. Variabel (Properti)
-    public string nama = "Master";
-    public int health = 100;
+namespace SurvivalGame {
+    public class PlayerManager {
+        // Properti Pemain
+        private string playerName = "Master";
+        private int health = 100;
+        private int currentScore = 0;
+        private int level = 1;
 
-    // 2. Fungsi (Method)
-    public void Serang() {
-        Console.WriteLine(nama + " melancarkan serangan!");
-    }
-}
+        public void StartGame() {
+            Console.WriteLine("Memulai Sistem Game untuk: " + playerName);
+            UpdateStatus();
+        }
 
-class Program {
-    static void Main() {
-        KarakterGame pemain = new KarakterGame();
-        pemain.Serang();
-        Console.WriteLine("HP Saat Ini: " + pemain.health);
+        public void TakeDamage(int damage) {
+            health -= damage;
+            if (health <= 0) {
+                GameOver();
+            } else {
+                Console.WriteLine("Master terkena serangan! Sisa HP: " + health);
+            }
+        }
+
+        public void AddScore(int points) {
+            currentScore += points;
+            Console.WriteLine("Skor bertambah: " + currentScore);
+            
+            // Logika Level Up setiap 100 poin
+            if (currentScore >= level * 100) {
+                LevelUp();
+            }
+        }
+
+        private void LevelUp() {
+            level++;
+            health = 100; // Reset HP saat naik level
+            Console.WriteLine("SELAMAT! Naik ke Level: " + level);
+        }
+
+        private void GameOver() {
+            Console.WriteLine("GAME OVER! Skor Akhir Master: " + currentScore);
+        }
+
+        private void UpdateStatus() {
+            Console.WriteLine("--- Status Saat Ini ---");
+            Console.WriteLine("HP: " + health + " | Level: " + level);
+        }
     }
 }
