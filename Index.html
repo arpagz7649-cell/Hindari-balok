@@ -2,164 +2,31 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Survival Master Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyek Master</title>
     <style>
-        :root {
-            --primary: #00d2ff;
-            --danger: #ff416c;
-            --bg: #0f2027;
-        }
         body {
-            margin: 0; background: var(--bg);
-            font-family: 'Segoe UI', sans-serif;
-            color: white; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; height: 100vh;
-            overflow: hidden; touch-action: none;
+            font-family: sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
         }
-        #game-container {
-            position: relative; width: 90vw; height: 60vh;
-            max-width: 400px; background: linear-gradient(to bottom, #203a43, #2c5364);
-            border: 3px solid var(--primary); border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5); overflow: hidden;
+        .kotak {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 50px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        #player {
-            position: absolute; width: 35px; height: 35px;
-            background: var(--primary); border-radius: 8px;
-            box-shadow: 0 0 15px var(--primary);
-            transition: transform 0.1s;
-        }
-        .rock {
-            position: absolute; width: 25px; height: 25px;
-            background: var(--danger); border-radius: 50%;
-            box-shadow: 0 0 10px var(--danger);
-        }
-        #stats {
-            width: 90vw; max-width: 400px; display: flex;
-            justify-content: space-between; margin-bottom: 10px;
-            font-weight: bold; text-transform: uppercase; letter-spacing: 1px;
-        }
-        /* Kontrol D-Pad Modern */
-        #dpad {
-            display: grid; grid-template-areas: ". up ." "left down right";
-            gap: 10px; margin-top: 20px;
-        }
-        .btn {
-            width: 65px; height: 65px; background: rgba(255,255,255,0.1);
-            border: 2px solid var(--primary); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; color: var(--primary);
-            user-select: none; -webkit-tap-highlight-color: transparent;
-        }
-        .btn:active { background: var(--primary); color: white; scale: 0.9; }
-        #up { grid-area: up; } #left { grid-area: left; }
-        #down { grid-area: down; } #right { grid-area: right; }
     </style>
 </head>
 <body>
 
-    <div id="stats">
-        <div>Skor: <span id="score">0</span></div>
-        <div>HP: <span id="hp">100</span>%</div>
+    <div class="kotak">
+        <h1>Halo, Master!</h1>
+        <p>Ini adalah struktur HTML pertama kita.</p>
+        <button onclick="alert('Berhasil!')">Klik Saya</button>
     </div>
 
-    <div id="game-container">
-        <div id="player"></div>
-    </div>
-
-    <div id="dpad">
-        <div class="btn" id="up">▲</div>
-        <div class="btn" id="left">◀</div>
-        <div class="btn" id="down">▼</div>
-        <div class="btn" id="right">▶</div>
-    </div>
-
-    <script>
-        const player = document.getElementById('player');
-        const container = document.getElementById('game-container');
-        const hpDisplay = document.getElementById('hp');
-        const scoreDisplay = document.getElementById('score');
-
-        let pX = 180, pY = 300, hp = 100, score = 0;
-        const speed = 8;
-        const keys = {};
-
-        // Loop Game Utama agar gerakan mulus
-        function update() {
-            if (keys['up'] && pY > 0) pY -= speed;
-            if (keys['down'] && pY < container.offsetHeight - 35) pY += speed;
-            if (keys['left'] && pX > 0) pX -= speed;
-            if (keys['right'] && pX < container.offsetWidth - 35) pX += speed;
-
-            player.style.left = pX + 'px';
-            player.style.top = pY + 'px';
-            if(hp > 0) requestAnimationFrame(update);
-        }
-
-        // Kontrol HP (D-Pad)
-        const setupBtn = (id) => {
-            const btn = document.getElementById(id);
-            btn.onpointerdown = () => keys[id] = true;
-            btn.onpointerup = () => keys[id] = false;
-            btn.onpointerleave = () => keys[id] = false;
-        };
-        ['up', 'down', 'left', 'right'].forEach(setupBtn);
-
-        // Kontrol PC
-        window.onkeydown = (e) => {
-            if(e.key == "ArrowUp") keys['up'] = true;
-            if(e.key == "ArrowDown") keys['down'] = true;
-            if(e.key == "ArrowLeft") keys['left'] = true;
-            if(e.key == "ArrowRight") keys['right'] = true;
-        };
-        window.onkeyup = (e) => {
-            if(e.key == "ArrowUp") keys['up'] = false;
-            if(e.key == "ArrowDown") keys['down'] = false;
-            if(e.key == "ArrowLeft") keys['left'] = false;
-            if(e.key == "ArrowRight") keys['right'] = false;
-        };
-
-        // Sistem Batu
-        setInterval(() => {
-            if(hp <= 0) return;
-            const rock = document.createElement('div');
-            rock.className = 'rock';
-            rock.style.left = Math.random() * (container.offsetWidth - 25) + 'px';
-            rock.style.top = '-30px';
-            container.appendChild(rock);
-
-            let rY = -30;
-            const fall = setInterval(() => {
-                rY += 5 + (score / 10);
-                rock.style.top = rY + 'px';
-
-                // Cek Tabrakan
-                const rect1 = player.getBoundingClientRect();
-                const rect2 = rock.getBoundingClientRect();
-
-                if (!(rect1.right < rect2.left || rect1.left > rect2.right || 
-                      rect1.bottom < rect2.top || rect1.top > rect2.bottom)) {
-                    hp -= 10;
-                    hpDisplay.innerText = hp;
-                    rock.remove();
-                    clearInterval(fall);
-                    if(hp <= 0) {
-                        alert("GAME OVER! Skor: " + score);
-                        location.reload();
-                    }
-                }
-
-                if(rY > container.offsetHeight) {
-                    score++;
-                    scoreDisplay.innerText = score;
-                    rock.remove();
-                    clearInterval(fall);
-                }
-            }, 30);
-        }, 800);
-
-        requestAnimationFrame(update);
-    </script>
 </body>
 </html>
-
